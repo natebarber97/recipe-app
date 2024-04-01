@@ -18,7 +18,7 @@ const RecipePage = () => {
             console.log(json)
         }
         fetchRecipe()
-    }, [])
+    }, [location.state])
 
     return (
         <div className="RecipePage">

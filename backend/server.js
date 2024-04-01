@@ -18,6 +18,8 @@ app.use((req, res, next) => {
 // routes
 app.use('/api/recipes', recipeRoutes)
 
+
+// connect to db
 mongoose.connect(process.env.ATLAS_URI)
     .then(() => {
         // listen for requests
@@ -28,5 +30,3 @@ mongoose.connect(process.env.ATLAS_URI)
     .catch((error) => {
         console.log(error)
     })
-
-// progress: successfully connected to db
