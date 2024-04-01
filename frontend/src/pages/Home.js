@@ -1,4 +1,5 @@
 import {useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 //components
 import RecipeDetails from '../components/RecipeDetails'
@@ -6,6 +7,7 @@ import RecipeForm from '../components/RecipeForm'
 
 const Home = () => {
     const [recipes, setRecipes] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -27,7 +29,6 @@ const Home = () => {
                     <RecipeDetails key={recipe._id} recipe={recipe} />
                 ))}
             </div>
-            <RecipeForm />
         </div>
     )
 }

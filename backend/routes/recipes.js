@@ -15,7 +15,7 @@ router.get('/', getRecipes)
 router.get('/:id', getRecipe)
 
 // post a new recipe
-router.post('/', createRecipe)
+router.post('/create-recipe', createRecipe)
 
 // delete a recipe
 router.delete('/:id', deleteRecipe)

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import RecipePage from './pages/RecipePage'
 import Navbar from './components/Navbar'
+import CreateNewRecipe from './pages/CreateNewRecipe';
 
 function App() {
   return (
@@ -14,6 +15,10 @@ function App() {
             <Route
               path="/"
               element={<Home />}
+            />
+            <Route
+              path="/create-recipe"
+              element={<CreateNewRecipe />}
             />
             <Route
               path="/:id"

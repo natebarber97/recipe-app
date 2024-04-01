@@ -11,7 +11,7 @@ const RecipeForm = () => {
 
         const recipe = {title, ingredients, instructions}
 
-        const response = await fetch('/api/recipes', {
+        const response = await fetch('/api/recipes/create-recipe', {
             method: 'POST', 
             body: JSON.stringify(recipe),
             headers: {
@@ -58,6 +58,7 @@ const RecipeForm = () => {
 
         <button>Add New Recipe</button>
         {error && <div className="error">{error}</div>}
+        
       </form> 
     )
 }
