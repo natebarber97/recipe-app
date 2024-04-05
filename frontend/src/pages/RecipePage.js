@@ -9,11 +9,16 @@ const RecipePage = () => {
     useEffect(() => {
         const fetchRecipe = async () => {
             await axios.get('/api/recipes/' + location.state._id)
-            .then((res) => {
-                setRecipe(res.data)
+            .then(response => {
+                const recipe = response.data
+                if (recipe.length === 0) {
+                    return Promise.reject(new Error("Empty list"))
+                }
+                console.log(response.data)
+                setRecipe(response.data)
             })
             .catch((error) => {
-                console.log(error.message)
+                console.error(error)
             })
         }
         fetchRecipe()

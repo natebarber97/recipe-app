@@ -14,34 +14,44 @@ const getRecipes = async (req, res) => {
 }
 
 // get one recipe
-const getRecipe = async (req, res) => {
-    const { id } = req.params
-    await pool.query(
-        "SELECT * FROM \"Recipes\" WHERE _id = $1",
-        [id])
-        .then((result) => {
-            if (result.rows.length == 0) {
-                return res.status(404).json({error: "Recipe does not exist"})
-            }
-            res.status(200).json(result.rows.at(0))
-        })
-        .catch((error) => {
-            console.error(error)
-            res.status(500).json({error: "Internal Server Error"})
-        })
+const getRecipe = async(req, res, next) => {
+    try {
+        //const id = req.params.id.substring(1)
+        /*
+        if (!parseInt(id)) {
+            throw new Error('Does not exist')
+        }
+        */
+        await pool.query(
+            "SELECT * FROM \"Recipes\" WHERE _id = $1",
+            [req.params.id])
+            .then((result) => {
+                /*
+                if (result.rowCount === 0) {
+                    throw new Error('Does not exist')
+                }*/
+                res.status(200).send(result.rows.at(0))
+                
+            })
+    } catch (error) {
+        res.status(404).send({error: "does not exist"})
+        next(error)
+    }
 }
 
-const createRecipe = async (req, res) => {
-    const {title, ingredients, instructions} = req.body
-    await pool.query(
-        "INSERT INTO \"Recipes\" (title, ingredients, instructions) VALUES ($1, $2, $3)", 
-        [title, ingredients, instructions])
-        .then((result) => {
-            res.status(200).json(result.rows)
-        })
-        .catch ((error) => {
-            res.status(400).json({error: error.message})
-        })
+const createRecipe = async (req, res, next) => {
+    try {
+        const {title, ingredients, instructions} = req.body
+        await pool.query(
+            "INSERT INTO \"Recipes\" (title, ingredients, instructions) VALUES ($1, $2, $3)", 
+            [title, ingredients, instructions])
+            .then((result) => {
+                res.status(200).json(result.rows)
+            })
+    } catch (error) {
+        res.status(422).send({error: "unprocessable entity"})
+        next(error)
+    }
 }
 
 // delete a recipe

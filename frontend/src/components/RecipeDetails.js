@@ -4,7 +4,7 @@ const RecipeDetails = ({ recipe }) => {
     return (
         <div className="recipe-details">
             <Link
-                to={'/' + recipe._id}
+                to={'/:' + recipe._id}
                 state={{_id: recipe._id}}>
                 <h4>{recipe.title}</h4>
             </Link>
