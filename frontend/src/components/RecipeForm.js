@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 
 const RecipeForm = () => {
     const [title, setTitle] = useState('')
@@ -9,27 +10,21 @@ const RecipeForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const recipe = {title, ingredients, instructions}
-
-        const response = await fetch('/api/recipes/create-recipe', {
-            method: 'POST', 
-            body: JSON.stringify(recipe),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        const json = await response.json()
-
-        if (!response.ok) {
-            setError(json.error)
-        }
-        if (response.ok) {
+        await axios.post('/api/recipes/create-recipe', {
+          title: title,
+          ingredients: ingredients,
+          instructions: instructions})
+          .then(() => {
             setTitle('')
             setIngredients('')
             setInstructions('')
             setError(null)
-        }
-    }
+          })
+          .catch((error) => {
+            console.log(error.message)
+          })
+      }
+
 
     return (
       <form className="create" onSubmit={handleSubmit}>

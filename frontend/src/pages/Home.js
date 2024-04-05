@@ -1,23 +1,21 @@
 import {useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 //components
 import RecipeDetails from '../components/RecipeDetails'
-import RecipeForm from '../components/RecipeForm'
 
 const Home = () => {
     const [recipes, setRecipes] = useState(null)
-    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchRecipes = async () => {
-            const response = await fetch('/api/recipes')
-            const json = await response.json()
-
-            if (response.ok) {
-                setRecipes(json)
-            }
-            console.log(json)
+            await axios.get('/api/recipes')
+            .then((res) => {
+                setRecipes(res.data)
+            })
+            .catch((error) => {
+                console.log(error.message)
+            })
         }
         fetchRecipes()
     }, [])

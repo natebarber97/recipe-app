@@ -1,39 +1,47 @@
 const Recipe = require ('../models/recipeModel')
-const mongoose = require ('mongoose')
+const pool = require('../db')
 
 // get all recipes
 const getRecipes = async (req, res) => {
-    const recipes = await Recipe.find({}).sort({createdAt: -1})
-    res.status(200).json(recipes)
+    await pool.query("SELECT * FROM \"Recipes\"")
+        .then((result) => {
+            res.status(200).json(result.rows)
+        })
+        .catch((err) => {
+            console.error(err)
+            res.status(500).json({error: "Internal Server Error"})
+        })
 }
 
 // get one recipe
 const getRecipe = async (req, res) => {
     const { id } = req.params
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'Recipe does not exist'})
-    }
-
-    const recipe = await Recipe.findById(id)
-
-    if (!recipe) {
-        return res.status(404).json({error: 'Recipe does not exist'})
-    }
-
-    res.status(200).json(recipe)
+    await pool.query(
+        "SELECT * FROM \"Recipes\" WHERE _id = $1",
+        [id])
+        .then((result) => {
+            if (result.rows.length == 0) {
+                return res.status(404).json({error: "Recipe does not exist"})
+            }
+            res.status(200).json(result.rows.at(0))
+        })
+        .catch((error) => {
+            console.error(error)
+            res.status(500).json({error: "Internal Server Error"})
+        })
 }
 
-// create new recipe
 const createRecipe = async (req, res) => {
     const {title, ingredients, instructions} = req.body
-
-    try {
-        const recipe = await Recipe.create({title, ingredients, instructions})
-        res.status(200).json(recipe)
-    } catch (error) {
-        res.status(400).json({error: error.message})
-    }
+    await pool.query(
+        "INSERT INTO \"Recipes\" (title, ingredients, instructions) VALUES ($1, $2, $3)", 
+        [title, ingredients, instructions])
+        .then((result) => {
+            res.status(200).json(result.rows)
+        })
+        .catch ((error) => {
+            res.status(400).json({error: error.message})
+        })
 }
 
 // delete a recipe
