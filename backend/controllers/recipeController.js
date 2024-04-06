@@ -8,50 +8,40 @@ const getRecipes = async (req, res) => {
             res.status(200).json(result.rows)
         })
         .catch((err) => {
-            console.error(err)
             res.status(500).json({error: "Internal Server Error"})
+            next(err)
         })
 }
 
 // get one recipe
 const getRecipe = async(req, res, next) => {
-    try {
-        //const id = req.params.id.substring(1)
-        /*
-        if (!parseInt(id)) {
-            throw new Error('Does not exist')
-        }
-        */
-        await pool.query(
-            "SELECT * FROM \"Recipes\" WHERE _id = $1",
-            [req.params.id])
-            .then((result) => {
-                /*
-                if (result.rowCount === 0) {
-                    throw new Error('Does not exist')
-                }*/
-                res.status(200).send(result.rows.at(0))
-                
-            })
-    } catch (error) {
-        res.status(404).send({error: "does not exist"})
-        next(error)
-    }
+    await pool.query(
+        "SELECT * FROM \"Recipes\" WHERE _id = $1",
+        [req.params.id])
+        .then((result) => {
+            if (result.rowCount === 0) {
+                return res.status(404).send({error: "not found"})
+            }
+            res.status(200).send(result.rows.at(0))
+        })
+        .catch((error) => {
+            res.status(500).send({error: "internal server error"})
+            next(error)
+        })
 }
 
 const createRecipe = async (req, res, next) => {
-    try {
-        const {title, ingredients, instructions} = req.body
-        await pool.query(
-            "INSERT INTO \"Recipes\" (title, ingredients, instructions) VALUES ($1, $2, $3)", 
-            [title, ingredients, instructions])
-            .then((result) => {
-                res.status(200).json(result.rows)
-            })
-    } catch (error) {
-        res.status(422).send({error: "unprocessable entity"})
-        next(error)
-    }
+    const {title, ingredients, instructions} = req.body
+    await pool.query(
+        "INSERT INTO \"Recipes\" (title, ingredients, instructions) VALUES ($1, $2, $3)", 
+        [title, ingredients, instructions])
+        .then((result) => {
+            res.status(200).json(result.rows)
+        })
+        .catch((error) => {
+            res.status(500).send({error: "internal server error"})
+            next(error)
+        })
 }
 
 // delete a recipe
