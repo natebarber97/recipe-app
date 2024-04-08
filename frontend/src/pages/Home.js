@@ -1,13 +1,12 @@
-import {useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import {useEffect } from 'react'
+import { useRecipesContext } from '../hooks/useRecipesContext'
 
 //components
 import RecipeDetails from '../components/RecipeDetails'
 import RecipeForm from '../components/RecipeForm'
 
 const Home = () => {
-    const [recipes, setRecipes] = useState(null)
-    const navigate = useNavigate()
+    const {recipes, dispatch} = useRecipesContext()
 
     useEffect(() => {
         const fetchRecipes = async () => {
@@ -15,7 +14,7 @@ const Home = () => {
             const json = await response.json()
 
             if (response.ok) {
-                setRecipes(json)
+                dispatch({type: 'SET_RECIPES', payload: json})
             }
             console.log(json)
         }
@@ -29,6 +28,7 @@ const Home = () => {
                     <RecipeDetails key={recipe._id} recipe={recipe} />
                 ))}
             </div>
+            <RecipeForm />
         </div>
     )
 }

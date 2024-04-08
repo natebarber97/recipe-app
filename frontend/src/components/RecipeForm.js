@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useRecipesContext } from '../hooks/useRecipesContext' 
 
 const RecipeForm = () => {
+    const { dispatch } = useRecipesContext()
     const [title, setTitle] = useState('')
     const [ingredients, setIngredients] = useState('')
     const [instructions, setInstructions] = useState('')
@@ -28,6 +30,7 @@ const RecipeForm = () => {
             setIngredients('')
             setInstructions('')
             setError(null)
+            dispatch({type: 'CREATE_RECIPE', payload: json})
         }
     }
 
